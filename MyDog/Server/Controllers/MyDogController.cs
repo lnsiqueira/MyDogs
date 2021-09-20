@@ -20,7 +20,7 @@ namespace MyDog.Server.Controllers
         static List<MyDog.Shared.MyDog> myDogs = new List<MyDog.Shared.MyDog>
         {
             new MyDog.Shared.MyDog { Id = 1, Name = "Max", Color = "White" , BirthDate = Convert.ToDateTime("10/12/2004"), Breed = breed[0] },
-            new MyDog.Shared.MyDog { Id = 2, Name = "Toto", Color = "Black" , BirthDate = Convert.ToDateTime("01/12/2022"), Breed = breed[1] },
+            new MyDog.Shared.MyDog { Id = 2, Name = "Pink", Color = "Black" , BirthDate = Convert.ToDateTime("01/06/2020"), Breed = breed[1] },
         };
 
 
