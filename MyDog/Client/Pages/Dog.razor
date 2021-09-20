@@ -1,0 +1,30 @@
+﻿@page "/mydogs/{id:int}"
+@inject IMyDogService MyDogService
+
+
+@if (dog == null)
+{
+    <span>Loading...</span>
+}
+else
+{
+    <h3>This is my dog, called @dog.Name </h3>
+    <span>This dog is of the breed: @dog.Breed.Name</span>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    MyDog.Shared.MyDog dog = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        dog = await MyDogService.GetMyDog(Id);
+    }
+
+}

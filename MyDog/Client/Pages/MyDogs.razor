@@ -1,0 +1,82 @@
+﻿@page "/mydogs"
+@inject IMyDogService MyDogService
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<h3>My Dogs</h3>
+
+@if (MyDogService.Dogs.Count == 0)
+{
+    <span>Loading My Dogs...</span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Color</th>
+                <th>BirthDate</th>
+                <th>Breed</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dog in MyDogService.Dogs)
+            {
+            <tr>
+                <td>@dog.Name</td>
+                <td>@dog.Color</td>
+                <td>@dog.BirthDate</td>
+                <td>@dog.Breed.Name</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowDog(dog.Id))">Show</button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => EditDog(dog.Id))">Edit</button>
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => DeleteDog(dog.Id))">Delete</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+<EditMyDogs dog="dogToEdit"></EditMyDogs>
+
+@code {
+
+        MyDog.Shared.MyDog dogToEdit = new MyDog.Shared.MyDog();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MyDogService.GetMyDogs();
+        MyDogService.OnChange += StateHasChanged;
+    }
+
+    void ShowDog(int id)
+    {
+        NavigationManager.NavigateTo($"mydogs/{id}");
+    }
+
+    void EditDog(int id)
+    {
+        dogToEdit = MyDogService.Dogs.Find(d => d.Id == id);
+    }
+
+    void DeleteDog(int id)
+    {
+        MyDogService.DeleteDog(id);
+    }
+
+    public void Dispose()
+    {
+        MyDogService.OnChange -= StateHasChanged;
+    }
+
+}

@@ -1,0 +1,82 @@
+﻿@inject IMyDogService MyDogService
+@inject IJSRuntime JSRuntime
+
+@if (dog.Id == 0)
+{
+    <h3>Create a new Dog</h3>
+}
+else
+{
+    <h3>Edit '@dog.Name'</h3>
+}
+
+
+
+<EditForm Model="dog" OnSubmit="HandleSubmit">
+
+    <div class="form-group">
+        <label>Name</label>
+        <InputText @bind-Value="dog.Name" class="form-control"></InputText>
+    </div>
+
+    <div class="form-group">
+        <label>Color</label>
+        <InputText @bind-Value="dog.Color" class="form-control"></InputText>
+    </div>
+    <div class="form-group">
+        <label>Birth Date</label>
+        <InputDate @bind-Value="dog.BirthDate" class="form-control"></InputDate>
+    </div>
+    <div class="form-group">
+        <label>Breed</label><br />
+        <InputRadioGroup @bind-Value="breedId" class="form-control">
+            @foreach (var breed in MyDogService.Breed)
+            {
+                <InputRadio Value="@breed.Id" /><span style="padding-left: 5px;">@breed.Name</span><br />
+            }
+        </InputRadioGroup>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+
+    //[Parameter]
+    //public MyDog.Shared.MyDog MyDogToEdit { get; set; }
+
+    [Parameter]
+    public MyDog.Shared.MyDog dog { get; set; } = new MyDog.Shared.MyDog();
+    int breedId = 1;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        await MyDogService.GetBreed();
+        breedId = dog.Breed.Id;
+
+    }
+
+
+    async void HandleSubmit()
+    {
+        dog.Breed = MyDogService.Breed.FirstOrDefault(b => b.Id == breedId);
+
+        await JSRuntime.InvokeVoidAsync("console.log", dog);
+
+        if (dog.Id == 0)
+        {
+            Console.WriteLine("CREATE");
+            await MyDogService.CreateDog(dog);
+        }
+
+        else
+        {
+            Console.WriteLine("UPDATE");
+            await MyDogService.UpdateDog(dog, dog.Id);
+        }
+
+    }
+}
